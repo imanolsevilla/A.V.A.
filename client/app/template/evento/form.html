@@ -1,0 +1,245 @@
+<div ng-repeat="error in errors" class="alert alert-danger fade in">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Error!</strong> {{error.msg}}
+</div>
+<div ng-repeat="alert in alerts" class="alert alert-success fade in">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Success!</strong> {{alert.msg}}
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">Eventos</h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+  <div class="col-lg-12">
+    <div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">Nuevo Evento</div>
+              <div class="panel-body">
+                <form role="form"
+                      ng-submit="new(logoFile)"
+                      id=  "uploadForm"
+                      enctype   =  "multipart/form-data"
+                      name="searchForm">
+                  <div class="form-group " ng-class="fecha.cssClass">
+                    <div class="dropdown">
+                      <label>Fecha</label>
+                      <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                        <div class="input-group" >
+                          <input ng-change="comprobarCampo($event)" uib-datepicker-popup type="date" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy"  datepicker-mode="month" datetime-picker="dd MMM yyyy" data-ng-model="data.dateDropDownInput">
+                            <span class="input-group-addon" ng-mouseleave="comprobarCampo($event)">
+                              <i class="glyphicon glyphicon-calendar">
+                              </i>
+                            </span>
+                        </div>
+                      </a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <datetimepicker  datetime-picker="dd MMM yyyy" data-ng-model="data.dateDropDownInput" data-datetimepicker-config="{ minuteStep: 15,startView:'day', minView:'day', dropdownSelector: '#dropdown2' }"/>
+                      </ul>
+                      <span ng-show="fecha.helpText" class="help-inline label-warning">{{fecha.helpText}}</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group" ng-class="name.cssClass" >
+                    <label>Título</label>
+                    <input ng-model="evento.name" ng-keyup="comprobarCampo($event)"  id="name" name="name" class="form-control">
+                    <span ng-show="name.helpText" class="help-inline label-warning">{{name.helpText}}</span>
+
+                  </div>
+                  <div class="form-group"  ng-class="desc.cssClass">
+                    <label>Descripción</label>
+                    <textarea ng-model="evento.desc" ng-keyup="comprobarCampo($event)" id="desc" name="desc" class="form-control" rows="3"></textarea>
+                    <span ng-show="desc.helpText" class="help-inline label-warning">{{desc.helpText}}</span>
+                  </div>
+                  <div class="form-group" ng-class="file.cssClass">
+                    <label>Imagen cartel</label>
+                    <input accept="image/*" type="file" id="logo" name="logo" ng-file-select="onFileSelect($files)" file-model="logoFile" >
+                    <img ng-show="imageSrc" ng-src="{{imageSrc}}" height="auto" width="125px">
+                    <span ng-show="file.helpText" class="help-inline label-warning">{{file.helpText}}</span>
+                  </div>
+                  <div class="form-group">
+                    <label>Servicio de autobús</label>
+                    <label class="checkbox-inline">
+                      <input ng-model="evento.autobus" id="autobus" name="autobus" type="checkbox"><i class="fa fa-bus"></i>
+                    </label>
+                  </div>
+                  <div ng-show="evento.autobus" class="form-group">
+                    <label>Horarios autobus</label>
+                    <textarea  ng-model="evento.horarios" id="horarios" name="horarios" class="form-control" rows="3"></textarea>
+                  </div>
+                  <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-facebook"></i>
+                                            </span>
+                    <input ng-model="evento.fb" type="text" id="fb" name="fb" class="form-control" placeholder="Link publicación">
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-lg btn-outline btn-rounded">Subir</button>
+                  <button type="reset" class="btn btn-warning btn-lg btn-outline btn-rounded">Limpiar campos</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- /.col-lg-6 (nested) -->
+          <div class="col-lg-8">
+            <div class="row">
+              <div class="panel panel-default">
+                <div class="panel-heading">Eventos Publicados</div>
+                <div class="panel-body">
+                  <div class="col-lg-6">
+                    <div class="dataTable_wrapper">
+                      <table datatable="ng" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                        <tr>
+                          <th>Id</th>
+                          <th>Evento</th>
+                          <th>Fecha</th>
+                          <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="odd gradeX"  ng-repeat="evento in eventos" ng-click='muestraEvento(evento)'>
+                          <td>{{evento.id}}</td>
+                          <td>{{evento.name}}</td>
+                          <td>{{evento.fecha | date:'medium' }}</td>
+                          <td><a ng-click="delete(evento)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a></td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <form role="form" ng-submit="modificarDatos(logoFile)" ng-show="eventoAct">
+
+                      <div class="form-group" ng-class="fechaAct.cssClass">
+                        <div class="dropdown">
+                          <label>Fecha</label>
+                          <a class="dropdown-toggle" id="dropdown3" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <div class="input-group">
+                              <input type="date" ng-change="comprobarCampo($event)" class="form-control"  datetime-picker="dd MMM yyyy" data-ng-model="eventoAct.fecha"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                          </a>
+                          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker  datetime-picker="dd MMM yyyy" data-ng-model="eventoAct.fecha" data-datetimepicker-config="{ minuteStep: 15,startView:'day', minView:'day', dropdownSelector: '#dropdown3' }"/>
+                          </ul>
+                          <span ng-show="fechaAct.helpText" class="help-inline label-warning">{{fechaAct.helpText}}</span>
+
+                        </div>
+                      </div>
+
+                      <div class="form-group" ng-class="nameAct.cssClass">
+                        <label>Título</label>
+                        <input class="form-control" ng-keyup="comprobarCampo($event)" name="nameAct" ng-model="eventoAct.name">
+                        <span ng-show="nameAct.helpText" class="help-inline label-warning">{{nameAct.helpText}}</span>
+                      </div>
+                      <div class="form-group" ng-class="descAct.cssClass">
+                        <label>Descripción</label>
+                        <textarea class="form-control" ng-keyup="comprobarCampo($event)" name="descAct" ng-model='eventoAct.desc' rows="3" ></textarea>
+                        <span ng-show="descAct.helpText" class="help-inline label-warning">{{descAct.helpText}}</span>
+                      </div>
+                      <div class="form-group" ng-class="fileAct.cssClass">
+                        <label>Imagen cartel</label>
+                        <input type="file" file-model="logoFile"  id="logoAct" name="logoAct" ng-file-select="onFileSelect($files)">
+                        <div ng-hide="imageSrcAct">
+                          <div ng-show='eventoAct.foto'>
+                            <img src="{{eventoAct.foto}}" height="auto" width="125px" >
+                          </div>
+                        </div>
+                        <img ng-show="imageSrcAct" ng-src="{{imageSrcAct}}" height="auto" width="125px">
+                        <span ng-show="fileAct.helpText" class="help-inline label-warning">{{fileAct.helpText}}</span>
+                      </div>
+                      <div class="form-group">
+                        <label>Servicio de autobús</label>
+                        <label class="checkbox-inline">
+                          <input type="checkbox" ng-model="eventoAct.autobus"><i class="fa fa-bus"></i>
+                        </label>
+                      </div>
+                      <div ng-show="eventoAct.autobus" class="form-group">
+                        <label>Horarios autobus</label>
+                        <textarea ng-model="eventoAct.horarios" class="form-control" rows="3" ></textarea>
+                      </div>
+                      <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-facebook"></i></span>
+                        <input type="text" class="form-control" placeholder="Link publicación" ng-model="eventoAct.fb">
+                      </div>
+                      <button type="submit" class="btn btn-success btn-lg btn-outline btn-rounded">Modificar</button>
+                    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <form role="form"  ng-hide="eventoAct">
+
+                      <div class="form-group" >
+                        <div class="dropdown">
+                          <label>Fecha</label>
+                          <a class="dropdown-toggle"  role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <div class="input-group">
+                              <input type="date" class="form-control"  datetime-picker="dd MMM yyyy" disabled><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                          </a>
+
+                        </div>
+                      </div>
+
+                      <div class="form-group" >
+                        <label>Título</label>
+                        <input disabled class="form-control"name="nameAct">
+                        <span ng-show="nameAct.helpText" class="help-inline label-warning">{{nameAct.helpText}}</span>
+                      </div>
+                      <div class="form-group" ng-class="descAct.cssClass">
+                        <label>Descripción</label>
+                        <textarea disabled class="form-control" ng-keyup="comprobarCampo($event)" name="descAct" ng-model='eventoAct.desc' rows="3" ></textarea>
+                        <span ng-show="descAct.helpText" class="help-inline label-warning">{{descAct.helpText}}</span>
+                      </div>
+                      <div class="form-group" ng-class="fileAct.cssClass">
+                        <label>Imagen cartel</label>
+                        <input disabled type="file" file-model="logoFile"  name="logoAct" >
+                      </div>
+                      <div class="form-group">
+                        <label>Servicio de autobús</label>
+                        <label class="checkbox-inline">
+                          <input disabled type="checkbox" ng-model="eventoAct.autobus"><i class="fa fa-bus"></i>
+                        </label>
+                      </div>
+                      <div ng-show="eventoAct.autobus" class="form-group">
+                        <label>Horarios autobus</label>
+                        <textarea disabled ng-model="eventoAct.horarios" class="form-control" rows="3" ></textarea>
+                      </div>
+                      <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-facebook"></i></span>
+                        <input disabled type="text" class="form-control" placeholder="Link publicación" ng-model="eventoAct.fb">
+                      </div>
+                      <button type="submit" class="btn btn-success btn-lg btn-outline btn-rounded">Modificar</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.col-lg-6 (nested) -->
+        </div>
+        <!-- /.row (nested) -->
+      </div>
+      <!-- /.panel-body -->
+
+    </div>
+    <!-- /.panel -->
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
